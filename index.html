@@ -3,27 +3,46 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./assets/css/styles.css">
   <title>AwesomeBooks</title>
 </head>
-<body>
-  <h1>Awesome Books</h1>
-  <div>
-    <p>Lorem ipsum</p>
-    <p>Testeroo Testyy</p>
-    <button type="button">Remove</button>
-    <hr>
-  </div>
-  <div>
-    <p>Second book</p>
-    <p>Testeroo Testyy</p>
-    <button type="button">Remove</button>
-    <hr>
-  </div>
 
-  <form>
-    <input type="text" placeholder="Title">
-    <input type="text" placeholder="Author">
-    <button type="submit">Add</button>
+<body>
+
+  <h1>Awesome Books</h1>
+  
+  <!--<ul> #booklist will hold the list of books-->
+  <ul id="bookslist">
+    <li>
+      <p>Lorem ipsum</p>
+      <p>Testeroo Testyy</p>
+      <button type="button">Remove</button>
+      <hr>
+    </li>
+    <li>
+      <p>Second book</p>
+      <p>Testeroo Testyy</p>
+      <button type="button">Remove</button>
+      <hr>
+    </li>
+  </ul>
+  <!--EOF #booklist-->
+
+  <!--form #addbook will be used to add new books-->
+  <form id="addbook">
+    <ul>
+      <li>
+        <input type="text" id="bookname" name="bookname" placeholder="Title" pattern="((\w|\d)+\s?)*(\w|\d)+" minlength="6" required><br>
+      </li>
+      <li>
+        <input type="text" id="bookauthor" name="bookauthor" placeholder="Author" pattern="(\w+\s?)*(\w)+" minlength="6" required><br>
+      </li>
+      <li>
+        <button type="submit" id="submitbook">Add</button>
+      </li>
+    </ul>
   </form>
+
+  <script src="./assets/js/app.js"></script>
 </body>
 </html>
