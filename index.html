@@ -29,13 +29,13 @@
   <!--EOF #booklist-->
 
   <!--form #addbook will be used to add new books-->
-  <form id="addbook">
+  <form id="addbook" novalidate>
     <ul>
       <li>
-        <input type="text" id="bookname" name="bookname" placeholder="Title" pattern="((\w|\d)+\s?)*(\w|\d)+" minlength="6" required><br>
+        <input type="text" id="title" name="booktitle" placeholder="Title" pattern="((\w|\d)+\s?)*(\w|\d)+" minlength="6" required><br>
       </li>
       <li>
-        <input type="text" id="bookauthor" name="bookauthor" placeholder="Author" pattern="(\w+\s?)*(\w)+" minlength="6" required><br>
+        <input type="text" id="author" name="bookauthor" placeholder="Author" pattern="(\w+\s?)*(\w)+" minlength="6" required><br>
       </li>
       <li>
         <button type="submit" id="submitbook">Add</button>
