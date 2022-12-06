@@ -26,28 +26,50 @@ function insertBook(book) {
   return book;
 }
 
-// -- displayBook - after getting title/author valid entries the book is displayed -- //
-function displayBook(formInputs) {
-  const newBook = createBook(Array.from(formInputs));
-  console.log(insertBook(newBook));
+// -- createTemplateBook - generate the HTML to insert the book in the DOMM -- //
+function createTemplateBook(newBook) {
+  const templateBook = `
+    <p>${newBook.title}</p>
+    <p>${newBook.author}</p>
+    <button type="button">Remove</button>
+    <hr>
+    `;
+  return templateBook;
 }
 
 // -- showInputError - display and error if title/author are invalid -- //
 function showInputError(invalidInput) {
-  if (invalidInput.validity.valueMissing) {
-    invalidInput.setCustomValidity(`Book ${invalidInput.placeholder} is required and can't be empty.`);
-  } else if (invalidInput.validity.tooShort) {
-    invalidInput.setCustomValidity(`Book ${invalidInput.placeholder} length must be 6 chars at least.`);
-  } else if (invalidInput.validity.patternMismatch) {
-    invalidInput.setCustomValidity(`Book ${invalidInput.placeholder} can't start or end with spaces.`);
-  } else if (invalidInput.validity.customError) {
-    invalidInput.setCustomValidity(`The Book ${invalidInput.value} already exists. No duplicates allowed.`);
-    invalidInput.value = '';
-  } else {
-    invalidInput.setCustomValidity('');
+  if (!invalidInput.validity.customError) {
+    if (invalidInput.validity.valueMissing) {
+      invalidInput.setCustomValidity(`Book ${invalidInput.placeholder} is required and can't be empty.`);
+    } else if (invalidInput.validity.tooShort) {
+      invalidInput.setCustomValidity(`Book ${invalidInput.placeholder} length must be 6 chars at least.`);
+    } else if (invalidInput.validity.patternMismatch) {
+      invalidInput.setCustomValidity(`Book ${invalidInput.placeholder} can't start or end with spaces.`);
+    } else {
+      invalidInput.setCustomValidity('');
+    }
   }
   invalidInput.focus();
   invalidInput.reportValidity();
+}
+
+// -- displayBook - after getting title/author valid entries the book is displayed -- //
+function displayBook(form) {
+  if (bookExists(form.elements.title)) {
+    form.elements.title.setCustomValidity(`The Book ${form.elements.title.value} already exists. No duplicates allowed.`);
+    showInputError(form.elements.title);
+  } else {
+    const newBook = createBook(Array.from(form.querySelectorAll('input')));
+    const ulBooksList = document.getElementById('bookslist');
+    const bookFragment = document.createDocumentFragment();
+    const liBook = document.createElement('li');
+    liBook.innerHTML = createTemplateBook(insertBook(newBook));
+    bookFragment.appendChild(liBook);
+    ulBooksList.appendChild(bookFragment);
+    form.reset();
+    form.elements.title.focus();
+  }
 }
 
 // -- booksList - <ul> that contains the list of books -- //
@@ -57,15 +79,13 @@ const addBook = document.forms.addbook;
 addBook.addEventListener('submit', (e) => {
   e.preventDefault();
 
+  // -- with customError and not empty value we have to check again if the book exists -- //
+  if (e.target.elements.title.value && e.target.elements.title.validity.customError) {
+    e.target.elements.title.setCustomValidity('');
+  }
+
   if (e.target.checkValidity()) {
-    const checkTitle = e.target.querySelector('#title');
-    if (bookExists(checkTitle)) {
-      checkTitle.setCustomValidity(`The Book already exists.`);
-      showInputError(checkTitle);
-    } else {
-      // checkTitle.setCustomValidity('');
-      displayBook(e.target.querySelectorAll('input:valid'));
-    }
+    displayBook(e.target);
   } else {
     showInputError(e.target.querySelector(':invalid'));
   }
