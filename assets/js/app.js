@@ -2,14 +2,19 @@
 // implemented for the AwesomeBoks App
 
 // -- allBooks - collection that keeps a list of books -- //
-const allBooks = [];
+let allBooks = [];
 
-// -- bookExists - checks if the book already exists in the collection -- //
-function bookExists(newBook) {
-  return allBooks.some((book) => book.title === newBook.value);
+// -- (f) saveBooks - save the books list into local storage -- //
+function saveBooks() {
+  localStorage.setItem('abData', JSON.stringify(allBooks));
 }
 
-// -- createBook - creates a book object -- //
+// -- (f) bookExists - checks if the book already exists in the collection -- //
+function bookExists(newBook) {
+  return allBooks.some((book) => book.title.toLowerCase() === newBook.value.toLowerCase());
+}
+
+// -- (f) createBook - creates a book object -- //
 function createBook(bookInputs) {
   const book = { };
 
@@ -20,13 +25,14 @@ function createBook(bookInputs) {
   return book;
 }
 
-// -- insertBook - adds the book into the collection -- //
+// -- (f) insertBook - adds the book into the collection -- //
 function insertBook(book) {
   allBooks.push(book);
+  saveBooks();
   return book;
 }
 
-// -- createTemplateBook - generate the HTML to insert the book in the DOMM -- //
+// -- (f) createTemplateBook - generate the HTML to insert the book in the DOMM -- //
 function createTemplateBook(newBook) {
   const templateBook = `
     <p>${newBook.title}</p>
@@ -37,7 +43,7 @@ function createTemplateBook(newBook) {
   return templateBook;
 }
 
-// -- showInputError - display and error if title/author are invalid -- //
+// -- (f) showInputError - display and error if title/author are invalid -- //
 function showInputError(invalidInput) {
   if (!invalidInput.validity.customError) {
     if (invalidInput.validity.valueMissing) {
@@ -54,26 +60,49 @@ function showInputError(invalidInput) {
   invalidInput.reportValidity();
 }
 
-// -- displayBook - after getting title/author valid entries the book is displayed -- //
-function displayBook(form) {
-  if (bookExists(form.elements.title)) {
-    form.elements.title.setCustomValidity(`The Book ${form.elements.title.value} already exists. No duplicates allowed.`);
-    showInputError(form.elements.title);
-  } else {
-    const newBook = createBook(Array.from(form.querySelectorAll('input')));
-    const ulBooksList = document.getElementById('bookslist');
-    const bookFragment = document.createDocumentFragment();
-    const liBook = document.createElement('li');
-    liBook.innerHTML = createTemplateBook(insertBook(newBook));
-    bookFragment.appendChild(liBook);
-    ulBooksList.appendChild(bookFragment);
-    form.reset();
-    form.elements.title.focus();
-  }
+// -- (f) displayBook - after getting title/author valid entries the book is displayed -- //
+function displayBook(book) {
+  const ulBooksList = document.getElementById('bookslist');
+  const bookFragment = document.createDocumentFragment();
+  const liBook = document.createElement('li');
+  liBook.innerHTML = createTemplateBook(book);
+  bookFragment.appendChild(liBook);
+  ulBooksList.appendChild(bookFragment);
+  return book;
 }
 
-// -- booksList - <ul> that contains the list of books -- //
+// -- (f) deleteBook - deletes the book from the collection -- //
+function deleteBook(selectedBook) {
+  const previousBooks = allBooks.length;
+
+  allBooks = allBooks.filter((book) => book.title.toLowerCase() !== selectedBook.toLowerCase());
+
+  return (previousBooks !== allBooks.length);
+}
+
+// -- (f) removeBook - after deleting the book from the collection removes it from screen -- //
+function removeBook(bookElement) {
+  if (deleteBook(bookElement.firstElementChild.textContent)) {
+    saveBooks();
+    bookElement.parentNode.removeChild(bookElement);
+  }
+}
+// -- addBook - form used to add a new book -- //
 const addBook = document.forms.addbook;
+
+window.addEventListener('load', () => {
+  let abData = JSON.parse(localStorage.getItem('abData'));
+
+  abData ??= [];
+
+  if (abData.length > 0) {
+    allBooks = abData;
+
+    allBooks.forEach((book) => {
+      displayBook(book);
+    });
+  }
+});
 
 // -- onFormSubmit - the book is added or an error is displayed -- //
 addBook.addEventListener('submit', (e) => {
@@ -85,8 +114,27 @@ addBook.addEventListener('submit', (e) => {
   }
 
   if (e.target.checkValidity()) {
-    displayBook(e.target);
+    const formElements = e.target.elements;
+    if (bookExists(formElements.title)) {
+      formElements.title.setCustomValidity(`The Book ${formElements.title.value} already exists. No duplicates allowed.`);
+      showInputError(formElements.title);
+    } else {
+      const newBook = createBook(Array.from(e.target.querySelectorAll('input')));
+      displayBook(insertBook(newBook));
+      e.target.reset();
+      e.target.elements.title.focus();
+    }
   } else {
     showInputError(e.target.querySelector(':invalid'));
+  }
+});
+
+// -- booksList - <ul> that contains the list of books -- //
+const booksList = document.getElementById('bookslist');
+
+// -- when we click on the delete button of a book -- //
+booksList.addEventListener('click', (e) => {
+  if (e.target.type === 'button') {
+    removeBook(e.target.parentElement);
   }
 });
