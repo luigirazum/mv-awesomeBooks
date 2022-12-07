@@ -3,9 +3,33 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./assets/css/styles.css">
   <title>AwesomeBooks</title>
 </head>
+
 <body>
+
+  <h1>Awesome Books</h1>
   
+  <!--<ul> #booklist will hold the list of books-->
+  <ul id="bookslist"></ul>
+  <!--EOF #booklist-->
+
+  <!--form #addbook will be used to add new books-->
+  <form id="addbook" novalidate>
+    <ul>
+      <li>
+        <input type="text" id="title" name="booktitle" placeholder="Title" pattern="((\w|\d)+\s?)*(\w|\d)+" minlength="6" required><br>
+      </li>
+      <li>
+        <input type="text" id="author" name="bookauthor" placeholder="Author" pattern="(\w+\s?)*(\w)+" minlength="6" required><br>
+      </li>
+      <li>
+        <button type="submit" id="submitbook">Add</button>
+      </li>
+    </ul>
+  </form>
+
+  <script src="./assets/js/app.js"></script>
 </body>
 </html>
