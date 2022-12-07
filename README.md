@@ -25,7 +25,7 @@
 - [❓ FAQ](#faq)
 - [📝 License](#license)
 
-# 📖 [DevWeek] <a name="about-project"></a>
+# 📖 [AwesomeBooks] <a name="about-project"></a>
 
 **[AwesomeBooks]** is an App where you can list the best books available. It lets you add books with a very simple form and in case you need it, you can also delete the book that is not interesting for you anymore.
 
