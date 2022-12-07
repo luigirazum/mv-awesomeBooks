@@ -35,8 +35,7 @@ function insertBook(book) {
 // -- (f) createTemplateBook - generate the HTML to insert the book in the DOMM -- //
 function createTemplateBook(newBook) {
   const templateBook = `
-    <p>${newBook.title}</p>
-    <p>${newBook.author}</p>
+    <span>${newBook.title}</span><span> by ${newBook.author}</span>
     <button type="button">Remove</button>
     <hr>
     `;
