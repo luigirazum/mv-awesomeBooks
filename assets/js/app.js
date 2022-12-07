@@ -111,6 +111,9 @@ addBook.addEventListener('submit', (e) => {
   if (e.target.elements.title.value && e.target.elements.title.validity.customError) {
     e.target.elements.title.setCustomValidity('');
   }
+  if (e.target.elements.author.value && e.target.elements.author.validity.customError) {
+    e.target.elements.author.setCustomValidity('');
+  }
 
   if (e.target.checkValidity()) {
     const formElements = e.target.elements;
