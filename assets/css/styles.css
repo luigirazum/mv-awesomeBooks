@@ -1,18 +1,92 @@
 /* In this file you'll find the CSS styles
    applied to AwesomeBooks App              */
 
+   /* -- Fonts -- */
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@1,700&display=swap');
+
+/* -- Set default font -- */
+:root {
+  /* -- Setting general variables -- */
+  --f-fam: 'Balsamiq Sans';
+  --s-reg: 0,400;
+  --s-bld: 0,700;
+
+  /* -- Setting the fonts -- */
+  font-family: var(--f-fam);
+  font-size: 16px;
+
+  /* -- Setting borders -- */
+  --b-gen: 3px solid #000;
+  --b-hr: 2px solid #000;
+}
+
 /* --BASIC default BROWSER SETTINGS-- */
 *,
 *::after,
 *::before {
+  margin: 0;
   padding: 0;
   list-style-type: none;
 }
 
-p {
-  margin-block: 0;
+hr {
+  margin-block: 2em;
+  margin-inline: auto;
+  width: 25%;
+  border: var(--b-hr);
+}
+
+ul,
+form {
+  border: var(--b-gen);
+}
+
+body {
+  font-size: 1em;
+  line-height: 1.8;
+}
+
+.container {
+  margin-block: 1em;
+  margin-inline: auto;
+  padding-inline: 0.3em;
+}
+
+h1,
+h2 {
+  font-size: 2.5em;
+  line-height: 2;
+  text-align: center;
+}
+
+ul li {
+  padding-inline: 0.5em;
+  line-height: 2.5;
+}
+
+ul li:nth-child(odd) {
+  background-color: #e0e0e0;
+}
+
+.book-title::before,
+.book-title::after {
+  content: '"';
+}
+
+.book-author {
+  text-transform: capitalize;
 }
 
 form {
-  line-height: 2;
+  line-height: 2.5;
+  display: flex;
+
+}
+
+input {
+  font-family: var(--f-fam);
+  font-size: 1.05em;
 }
