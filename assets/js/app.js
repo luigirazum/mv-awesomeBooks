@@ -1,6 +1,6 @@
 // We'll disable eslint rule that avoids
 // having multiple classes in one file
-/* eslint-disable max-classes-per-file, class-methods-use-this, no-extended-native */
+/* eslint-disable max-classes-per-file, class-methods-use-this */
 
 // -- (c) Book - class to create valid Books -- //
 class Book {
@@ -33,16 +33,16 @@ class Book {
       .map((current, index, array) => {
         if (
           /* Check for small words */
-          current.search(smallWords) > -1 &&
           /* Skip first and last word */
-          index !== 0 &&
-          index !== array.length - 1 &&
           /* Ignore title end and subtitle start */
-          array[index - 3] !== ':' &&
-          array[index + 1] !== ':' &&
           /* Ignore small words that start a hyphenated phrase */
-          (array[index + 1] !== '-' ||
-            (array[index - 1] === '-' && array[index + 1] === '-'))
+          current.search(smallWords) > -1
+          && index !== 0
+          && index !== array.length - 1
+          && array[index - 3] !== ':'
+          && array[index + 1] !== ':'
+          && (array[index + 1] !== '-'
+          || (array[index - 1] === '-' && array[index + 1] === '-'))
         ) {
           return current.toLowerCase();
         }
