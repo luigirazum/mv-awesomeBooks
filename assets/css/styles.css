@@ -1,7 +1,7 @@
 /* In this file you'll find the CSS styles
    applied to AwesomeBooks App              */
 
-   /* -- Fonts -- */
+/* -- Fonts -- */
 @import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@0,700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Balsamiq+Sans:ital,wght@1,400&display=swap');
@@ -11,15 +11,14 @@
 :root {
   /* -- Setting general variables -- */
   --f-fam: 'Balsamiq Sans';
-  --s-reg: 0,400;
-  --s-bld: 0,700;
+  --s-reg: 0, 400;
+  --s-bld: 0, 700;
 
   /* -- Setting the fonts -- */
-  font-family: var(--f-fam);
   font-size: 16px;
 
   /* -- Setting borders -- */
-  --b-gen: 3px solid #000;
+  --b-gen: 5px solid #000;
   --b-hr: 2px solid #000;
 }
 
@@ -30,6 +29,7 @@
   margin: 0;
   padding: 0;
   list-style-type: none;
+  font-family: var(--f-fam);
 }
 
 hr {
@@ -39,13 +39,8 @@ hr {
   border: var(--b-hr);
 }
 
-ul,
-form {
-  border: var(--b-gen);
-}
-
 body {
-  font-size: 1em;
+  font-size: 1.1em;
   line-height: 1.8;
 }
 
@@ -58,17 +53,51 @@ body {
 h1,
 h2 {
   font-size: 2.5em;
-  line-height: 2;
+  line-height: 1.5;
   text-align: center;
+  margin-bottom: 0.2em;
 }
 
-ul li {
-  padding-inline: 0.5em;
-  line-height: 2.5;
+ul,
+#add {
+  border: var(--b-gen);
+  width: 80%;
+  max-width: 55rem;
+  min-width: 30rem;
+  margin-inline: auto;
+}
+
+#add {
+  border: none;
+}
+
+form ul li {
+  display: flex;
+  padding: 0.5em;
 }
 
 ul li:nth-child(odd) {
+  background-color: transparent;
+}
+
+#list ul li {
+  padding-inline: 0.5em;
+  line-height: 2.5;
+  display: flex;
+  align-items: center;
+}
+
+#list ul li:nth-child(odd) {
   background-color: #e0e0e0;
+}
+
+#list ul li:hover,
+#list ul li:nth-child(odd):hover {
+  background-color: #bfbfbf;
+}
+
+.book-title {
+  margin-inline-end: 0.3em;
 }
 
 .book-title::before,
@@ -77,16 +106,69 @@ ul li:nth-child(odd) {
 }
 
 .book-author {
+  margin-inline-start: 0.3em;
+  margin-inline-end: auto;
   text-transform: capitalize;
 }
 
+button {
+  display: inline-block;
+  font-weight: bold;
+  cursor: pointer;
+  border: var(--b-hr);
+  font-size: 0.85em;
+  background-color: #fff;
+  padding: 0.4em 0.85em;
+  box-shadow: 3px 3px 0 #000;
+}
+
+form li button {
+  margin-left: auto;
+}
+
+button:hover {
+  margin-top: 3px;
+  margin-right: -3px;
+  box-shadow: none;
+  background-color: #7f7f7f;
+}
+
+button:active {
+  background-color: #3a3a3a;
+  color: #c0c0c0;
+}
+
 form {
+  margin-inline: auto;
+  justify-content: center;
   line-height: 2.5;
   display: flex;
+  width: 60%;
+  max-width: 25rem;
+  min-width: 15rem;
+  padding: 0 0.5em;
+}
 
+form ul {
+  border: none;
+  width: 100%;
 }
 
 input {
-  font-family: var(--f-fam);
+  width: 100%;
   font-size: 1.05em;
+  padding: 0.2em 0.3em;
+  border: var(--b-hr);
+}
+
+input:focus-visible {
+  outline: none;
+}
+
+input::placeholder {
+  color: #343434;
+}
+
+input:focus-visible::placeholder {
+  color: #a4a4a4;
 }
