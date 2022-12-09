@@ -1,142 +1,211 @@
-// In this file you'll find the JS code
-// implemented for the AwesomeBoks App
+// We'll disable eslint rule that avoids
+// having multiple classes in one file
+/* eslint-disable max-classes-per-file, class-methods-use-this */
 
-// -- allBooks - collection that keeps a list of books -- //
-let allBooks = [];
-
-// -- (f) saveBooks - save the books list into local storage -- //
-function saveBooks() {
-  localStorage.setItem('abData', JSON.stringify(allBooks));
-}
-
-// -- (f) bookExists - checks if the book already exists in the collection -- //
-function bookExists(newBook) {
-  return allBooks.some((book) => book.title.toLowerCase() === newBook.value.toLowerCase());
-}
-
-// -- (f) createBook - creates a book object -- //
-function createBook(bookInputs) {
-  const book = { };
-
-  bookInputs.forEach((bookInput) => {
-    book[bookInput.id] = bookInput.value;
-  });
-
-  return book;
-}
-
-// -- (f) insertBook - adds the book into the collection -- //
-function insertBook(book) {
-  allBooks.push(book);
-  saveBooks();
-  return book;
-}
-
-// -- (f) createTemplateBook - generate the HTML to insert the book in the DOMM -- //
-function createTemplateBook(newBook) {
-  const templateBook = `
-    <span>${newBook.title}</span><span> by ${newBook.author}</span>
-    <button type="button">Remove</button>
-    <hr>
-    `;
-  return templateBook;
-}
-
-// -- (f) showInputError - display and error if title/author are invalid -- //
-function showInputError(invalidInput) {
-  if (!invalidInput.validity.customError) {
-    if (invalidInput.validity.valueMissing) {
-      invalidInput.setCustomValidity(`Book ${invalidInput.placeholder} is required and can't be empty.`);
-    } else if (invalidInput.validity.tooShort) {
-      invalidInput.setCustomValidity(`Book ${invalidInput.placeholder} length must be 6 chars at least.`);
-    } else if (invalidInput.validity.patternMismatch) {
-      invalidInput.setCustomValidity(`Book ${invalidInput.placeholder} can't start or end with spaces.`);
-    } else {
-      invalidInput.setCustomValidity('');
-    }
+// -- (c) Book - class to create valid Books -- //
+class Book {
+  constructor({ title, author = null }) {
+    this.title = title;
+    this.author = author;
   }
-  invalidInput.focus();
-  invalidInput.reportValidity();
-}
 
-// -- (f) displayBook - after getting title/author valid entries the book is displayed -- //
-function displayBook(book) {
-  const ulBooksList = document.getElementById('bookslist');
-  const bookFragment = document.createDocumentFragment();
-  const liBook = document.createElement('li');
-  liBook.innerHTML = createTemplateBook(book);
-  bookFragment.appendChild(liBook);
-  ulBooksList.appendChild(bookFragment);
-  return book;
-}
+  // -- createLi - returns an <li> with the book info -- //
+  createLi() {
+    const templateBook = `
+    <span class="book-title">${this.toTitleCase()}</span>
+    <span>by</span>
+    <span class="book-author">${this.author}</span>
+    <button type="button">Remove</button>`;
+    const liBook = document.createElement('li');
+    liBook.innerHTML = templateBook;
+    const bookFragment = document.createDocumentFragment();
+    bookFragment.appendChild(liBook);
+    return bookFragment;
+  }
 
-// -- (f) deleteBook - deletes the book from the collection -- //
-function deleteBook(selectedBook) {
-  const previousBooks = allBooks.length;
+  /* To Title Case © 2018 David Gouch | https://github.com/gouch/to-title-case */
+  toTitleCase() {
+    const smallWords = /^(a|an|and|as|is|at|but|by|en|for|if|in|nor|of|on|or|per|the|to|v.?|vs.?|via)$/i;
+    const alphanumericPattern = /([A-Za-z0-9\u00C0-\u00FF])/;
+    const wordSeparators = /([ :–—-])/;
 
-  allBooks = allBooks.filter((book) => book.title.toLowerCase() !== selectedBook.toLowerCase());
+    return this.title.toLowerCase().split(wordSeparators)
+      .map((current, index, array) => {
+        if (
+          /* Check for small words */
+          /* Skip first and last word */
+          /* Ignore title end and subtitle start */
+          /* Ignore small words that start a hyphenated phrase */
+          current.search(smallWords) > -1
+          && index !== 0
+          && index !== array.length - 1
+          && array[index - 3] !== ':'
+          && array[index + 1] !== ':'
+          && (array[index + 1] !== '-'
+          || (array[index - 1] === '-' && array[index + 1] === '-'))
+        ) {
+          return current.toLowerCase();
+        }
 
-  return (previousBooks !== allBooks.length);
-}
+        /* Ignore intentional capitalization */
+        if (current.substr(1).search(/[A-Z]|\../) > -1) {
+          return current;
+        }
 
-// -- (f) removeBook - after deleting the book from the collection removes it from screen -- //
-function removeBook(bookElement) {
-  if (deleteBook(bookElement.firstElementChild.textContent)) {
-    saveBooks();
-    bookElement.parentNode.removeChild(bookElement);
+        /* Ignore URLs */
+        if (array[index + 1] === ':' && array[index + 2] !== '') {
+          return current;
+        }
+
+        /* Capitalize the first letter */
+        return current.replace(alphanumericPattern,
+          (match) => match.toUpperCase());
+      })
+      .join('');
   }
 }
-// -- addBook - form used to add a new book -- //
-const addBook = document.forms.addbook;
 
-window.addEventListener('load', () => {
-  let abData = JSON.parse(localStorage.getItem('abData'));
+// -- (c) Library - class to store valid Books -- //
+// -   it also insert, delete to localStorage   - //
+class Library {
+  constructor() {
+    let readBooks = JSON.parse(localStorage.getItem('abData'));
+    readBooks ??= [];
+    this.books = readBooks.map((book) => new Book(book));
+  }
 
-  abData ??= [];
+  // -- save - writes the library to the localStorage -- //
+  save() {
+    localStorage.setItem('abData', JSON.stringify(this.books));
+  }
 
-  if (abData.length > 0) {
-    allBooks = abData;
+  // -- has - verifies if a book is already in the library -- //
+  has({ title: nBook }) {
+    this.books.some(({ title: b }) => b.toLowerCase() === nBook.toLowerCase());
+  }
 
-    allBooks.forEach((book) => {
-      displayBook(book);
+  // -- insert - inserts a newBook into the library -- //
+  insert(newBook) {
+    this.books.push(newBook);
+    this.save();
+    return newBook;
+  }
+
+  // -- delete - deletes the sBook from the library -- //
+  delete({ title: sBook }) {
+    const previousBooks = this.books.length;
+
+    this.books = this.books.filter(({ title: b }) => b.toLowerCase() !== sBook.toLowerCase());
+
+    return (previousBooks !== this.books.length);
+  }
+}
+
+// -- (c) App - class to user interface -- //
+// -   it also insert, delete to localStorage   - //
+class App {
+  constructor() {
+    this.library = new Library();
+    this.addForm = document.forms.addbook;
+    this.formInputs = this.addForm.querySelectorAll('input');
+    this.booksUl = document.getElementById('bookslist');
+  }
+
+  // -- getLiteralBook - returns a book object in literal notation -- //
+  getLiteralBook() {
+    const literalBook = { };
+    const arrFormInputs = Array.from(this.formInputs);
+
+    arrFormInputs.forEach((formInput) => {
+      literalBook[formInput.id] = formInput.value;
     });
-  }
-});
 
-// -- onFormSubmit - the book is added or an error is displayed -- //
-addBook.addEventListener('submit', (e) => {
-  e.preventDefault();
-
-  // -- with customError and not empty value we have to check again if the book exists -- //
-  if (e.target.elements.title.value && e.target.elements.title.validity.customError) {
-    e.target.elements.title.setCustomValidity('');
-  }
-  if (e.target.elements.author.value && e.target.elements.author.validity.customError) {
-    e.target.elements.author.setCustomValidity('');
+    return literalBook;
   }
 
-  if (e.target.checkValidity()) {
-    const formElements = e.target.elements;
-    if (bookExists(formElements.title)) {
-      formElements.title.setCustomValidity(`The Book ${formElements.title.value} already exists. No duplicates allowed.`);
-      showInputError(formElements.title);
-    } else {
-      const newBook = createBook(Array.from(e.target.querySelectorAll('input')));
-      displayBook(insertBook(newBook));
-      e.target.reset();
-      e.target.elements.title.focus();
+  // -- displayBook - inserts a book in the DOM -- //
+  displayBook(book) {
+    const bookLi = book.createLi();
+    this.booksUl.appendChild(bookLi);
+  }
+
+  // -- listBooks - list all the books from the library -- //
+  listBooks() {
+    if (this.library.books.length > 0) {
+      this.library.books.forEach((book) => {
+        this.displayBook(book);
+      });
     }
-  } else {
-    showInputError(e.target.querySelector(':invalid'));
   }
-});
 
-// -- booksList - <ul> that contains the list of books -- //
-const booksList = document.getElementById('bookslist');
-
-// -- when we click on the delete button of a book -- //
-booksList.addEventListener('click', (e) => {
-  if (e.target.type === 'button') {
-    removeBook(e.target.parentElement);
+  // -- popError - shows a custom error if title/author are invalid -- //
+  popError(iInput) {
+    if (!iInput.validity.customError) {
+      if (iInput.validity.valueMissing) {
+        iInput.setCustomValidity(`Book ${iInput.placeholder} is required and can't be empty.`);
+      } else if (iInput.validity.tooShort) {
+        iInput.setCustomValidity(`Book ${iInput.placeholder} length must be 6 chars at least.`);
+      } else if (iInput.validity.patternMismatch) {
+        iInput.setCustomValidity(`Book ${iInput.placeholder} can't start or end with spaces.`);
+      } else {
+        iInput.setCustomValidity('');
+      }
+    }
+    iInput.focus();
+    iInput.reportValidity();
   }
-});
+
+  // -- removeBook - it deletes a Book from the DOM -- //
+  removeBook(event) {
+    const { target: t, target: { parentElement: pe } } = event;
+    if (t.type === 'button') {
+      const delBook = new Book({ title: pe.firstElementChild.textContent });
+      if (this.library.delete(delBook)) {
+        this.library.save();
+        pe.parentNode.removeChild(pe);
+      }
+    }
+  }
+
+  // -- addBook - inserts a book into the library & display the book in the DOM -- //
+  addBook(event) {
+    const { target: t, target: { elements: e } } = event;
+    event.preventDefault();
+
+    // -- with customError and not empty value we have to check again if the book exists -- //
+    if (e.title.value && e.title.validity.customError) {
+      e.title.setCustomValidity('');
+    }
+    if (e.author.value && e.author.validity.customError) {
+      e.author.setCustomValidity('');
+    }
+
+    if (t.checkValidity()) {
+      const checkBook = new Book({ title: e.title.value });
+      if (this.library.has(checkBook)) {
+        e.title.setCustomValidity(`The Book ${e.title.value} already exists. No duplicates allowed.`);
+        this.popError(e.title);
+      } else {
+        const newBook = new Book(this.getLiteralBook());
+        this.displayBook(newBook);
+        this.library.insert(newBook);
+        t.reset();
+        e.title.focus();
+      }
+    } else {
+      this.popError(t.querySelector(':invalid'));
+    }
+  }
+}
+
+// -- app - is the interface with the user -- //
+const app = new App();
+
+// - When the DOM is ready, the books from the localStorage are shown - //
+window.addEventListener('DOMContentLoaded', app.listBooks());
+
+// -- Listen to the submit event on the form -- //
+app.addForm.addEventListener('submit', (e) => app.addBook(e));
+
+// -- Listen to the click event on the list of books -- //
+app.booksUl.addEventListener('click', (e) => app.removeBook(e));
