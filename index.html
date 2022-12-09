@@ -18,17 +18,17 @@
     </section> <!--EOF #list section-->
   </div> <!--EOF .container-->
 
-  <hr>
-
+  
   <div class="container">
+    <hr>
     <section id="add">
       <h2>Add a new book</h2>
       <!--form #addbook will be used to add new books-->
-      <form id="addbook" novalidate>
+      <form id="addbook" novalidate autofocus>
         <ul>
           <li>
             <input type="text" id="title" name="booktitle" placeholder="Title" pattern="((\w|\d)+\s?)*(\w|\d)+"
-              minlength="6" required><br>
+              minlength="6" required autofocus><br>
           </li>
           <li>
             <input type="text" id="author" name="bookauthor" placeholder="Author" pattern="(\w+\s?)*(\w)+" minlength="6"
