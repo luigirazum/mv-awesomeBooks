@@ -18,7 +18,7 @@
   font-size: 16px;
 
   /* -- Setting borders -- */
-  --b-gen: 5px solid #000;
+  --b-gen: 3px solid #000;
   --b-hr: 2px solid #000;
 }
 
@@ -32,22 +32,36 @@
   font-family: var(--f-fam);
 }
 
-hr {
-  margin-block: 2em;
-  margin-inline: auto;
-  width: 25%;
-  border: var(--b-hr);
-}
-
 body {
   font-size: 1.1em;
   line-height: 1.8;
 }
 
+.fullscreen {
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
 .container {
-  margin-block: 1em;
-  margin-inline: auto;
   padding-inline: 0.3em;
+}
+
+#showdaytime {
+  text-align: right;
+  margin-top: 0.1em;
+}
+
+section {
+  display: none;
+}
+
+section.active {
+  padding-block-start: 1.5em;
+  display: flex;
+  flex-flow: column;
 }
 
 h1,
@@ -58,17 +72,35 @@ h2 {
   margin-bottom: 0.2em;
 }
 
-ul,
-#add {
+nav,
+footer {
   border: var(--b-gen);
-  width: 80%;
-  max-width: 55rem;
-  min-width: 30rem;
-  margin-inline: auto;
+  margin-inline: 0.3em;
+  padding: 0.2em 1em 0.2em 1.5em;
+  height: 1.7em;
+  margin-block-start: 0.4em;
+  display: flex;
+  text-align: center;
 }
 
-#add {
+footer {
+  margin-block-start: auto;
+  margin-block-end: 0.4em;
+}
+
+nav ul {
+  display: flex;
   border: none;
+}
+
+.logo {
+  margin-inline-end: auto;
+}
+
+nav li {
+  text-align: center;
+  padding-inline: 0.5em;
+  border-left: 2px solid #000;
 }
 
 form ul li {
@@ -76,8 +108,52 @@ form ul li {
   padding: 0.5em;
 }
 
+nav li:nth-child(1) {
+  padding-inline: 1em;
+  border-left: none;
+}
+
+form ul {
+  border: none;
+  width: 100%;
+}
+
+#bookslist {
+  border: var(--b-gen);
+  height: calc(100vh - 14.5em);
+  overflow-x: hidden;
+}
+
+.selected {
+  font-weight: bolder;
+}
+
+a,
+a:visited {
+  display: inline-block;
+  width: fit-content;
+  cursor: pointer;
+  color: #000;
+  text-decoration: none;
+}
+
+a:hover {
+  font-weight: bolder;
+}
+
 ul li:nth-child(odd) {
   background-color: transparent;
+}
+
+#contact ul li {
+  list-style: disc;
+  list-style-position: inside;
+  padding-left: 2em;
+}
+
+#list {
+  margin-block-start: 0;
+  margin-block-end: auto;
 }
 
 #list ul li {
@@ -94,6 +170,23 @@ ul li:nth-child(odd) {
 #list ul li:hover,
 #list ul li:nth-child(odd):hover {
   background-color: #bfbfbf;
+}
+
+#contact ul {
+  border: none;
+  margin-top: 1.5em;
+}
+
+#contact ul li a {
+  font-weight: bolder;
+}
+
+#contact h2 {
+  margin-bottom: 1em;
+}
+
+#contact p {
+  line-height: 1.5;
 }
 
 .book-title {
@@ -127,31 +220,26 @@ form li button {
 }
 
 button:hover {
+  background-color: #3a3a3a;
+  color: #c0c0c0;
+}
+
+button:active {
   margin-top: 3px;
   margin-right: -3px;
   box-shadow: none;
   background-color: #7f7f7f;
 }
 
-button:active {
-  background-color: #3a3a3a;
-  color: #c0c0c0;
-}
-
 form {
   margin-inline: auto;
+  padding: 0 0.5em;
+  width: 70%;
+  max-width: 30rem;
+  min-width: 15rem;
   justify-content: center;
   line-height: 2.5;
   display: flex;
-  width: 60%;
-  max-width: 25rem;
-  min-width: 15rem;
-  padding: 0 0.5em;
-}
-
-form ul {
-  border: none;
-  width: 100%;
 }
 
 input {
@@ -171,4 +259,11 @@ input::placeholder {
 
 input:focus-visible::placeholder {
   color: #a4a4a4;
+}
+
+#contact,
+#addnew {
+  max-width: 60%;
+  margin-inline: auto;
+  height: calc(100vh - 12.5em);
 }

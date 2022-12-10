@@ -1,6 +1,6 @@
 // We'll disable eslint rule that avoids
 // having multiple classes in one file
-/* eslint-disable max-classes-per-file, class-methods-use-this */
+/* eslint-disable max-classes-per-file, class-methods-use-this, no-unused-vars */
 
 // -- (c) Book - class to create valid Books -- //
 class Book {
@@ -109,6 +109,9 @@ class App {
     this.addForm = document.forms.addbook;
     this.formInputs = this.addForm.querySelectorAll('input');
     this.booksUl = document.getElementById('bookslist');
+    this.menu = document.getElementById('nav-menu');
+    this.link = document.getElementsByClassName('selected');
+    this.screen = document.getElementsByClassName('active');
   }
 
   // -- getLiteralBook - returns a book object in literal notation -- //
@@ -191,9 +194,32 @@ class App {
         this.library.insert(newBook);
         t.reset();
         e.title.focus();
+        this.menu.children[1].children[0].click();
       }
     } else {
       this.popError(t.querySelector(':invalid'));
+    }
+  }
+
+  showMenu(event) {
+    const { target: t } = event;
+    event.preventDefault();
+
+    if (t.tagName === 'A' && t.className !== 'logo' && t.className !== 'selected') {
+      this.link[0].classList.toggle('selected');
+      t.classList.toggle('selected');
+      this.link = document.getElementsByClassName('selected');
+
+      const currentScreen = document.getElementsByClassName('active');
+      currentScreen[0].classList.toggle('active');
+
+      const nextScreen = document.querySelector(t.dataset.target);
+      nextScreen.classList.toggle('active');
+    } else {
+      const listLink = document.querySelector('nav ul [data-target="#list"]');
+      if (listLink.className !== 'selected') {
+        listLink.click();
+      }
     }
   }
 }
@@ -209,3 +235,23 @@ app.addForm.addEventListener('submit', (e) => app.addBook(e));
 
 // -- Listen to the click event on the list of books -- //
 app.booksUl.addEventListener('click', (e) => app.removeBook(e));
+
+// -- Liste to the click event on the navbar options -- //
+app.menu.addEventListener('click', (e) => app.showMenu(e));
+
+// -- to show the date and time running -- //
+// Function to format 1 in 01
+const zeroFill = (n) => `0${n}`.slice(-2);
+
+// Creates interval
+const interval = setInterval(() => {
+  // Get current time
+  const now = new Date();
+
+  // Format date as in mm/dd/aaaa hh:ii:ss
+  const curDay = `${zeroFill((now.getMonth() + 1))}/${zeroFill(now.getUTCDate())}/${now.getFullYear()}`;
+  const curTim = `${zeroFill(now.getHours())}:${zeroFill(now.getMinutes())}:${zeroFill(now.getSeconds())}`;
+  const dateTime = `${curDay} ${curTim}`;
+  // Display the date and time on the screen using div#date-time
+  document.getElementById('showdaytime').innerHTML = dateTime;
+}, 1000);
