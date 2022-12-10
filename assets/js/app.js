@@ -1,6 +1,6 @@
 // We'll disable eslint rule that avoids
 // having multiple classes in one file
-/* eslint-disable max-classes-per-file, class-methods-use-this */
+/* eslint-disable max-classes-per-file, class-methods-use-this, no-unused-vars */
 
 // -- (c) Book - class to create valid Books -- //
 class Book {
