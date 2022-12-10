@@ -109,6 +109,9 @@ class App {
     this.addForm = document.forms.addbook;
     this.formInputs = this.addForm.querySelectorAll('input');
     this.booksUl = document.getElementById('bookslist');
+    this.menu = document.getElementById('nav-menu');
+    this.link = document.getElementsByClassName('selected');
+    this.screen = document.getElementsByClassName('active');
   }
 
   // -- getLiteralBook - returns a book object in literal notation -- //
@@ -196,6 +199,28 @@ class App {
       this.popError(t.querySelector(':invalid'));
     }
   }
+
+  showMenu(event) {
+    const { target: t } = event;
+    event.preventDefault();
+
+    if (t.tagName === 'A' && t.className !== 'logo' && t.className !== 'selected') {
+      this.link[0].classList.toggle('selected');
+      t.classList.toggle('selected');
+      this.link = document.getElementsByClassName('selected');
+
+      const currentScreen = document.getElementsByClassName('active');
+      currentScreen[0].classList.toggle('active');
+
+      const nextScreen = document.querySelector(t.dataset.target);
+      nextScreen.classList.toggle('active');
+    } else {
+      const listLink = document.querySelector('nav ul [data-target="#list"]');
+      if (listLink.className !== 'selected') {
+        listLink.click();
+      }
+    }
+  }
 }
 
 // -- app - is the interface with the user -- //
@@ -209,3 +234,6 @@ app.addForm.addEventListener('submit', (e) => app.addBook(e));
 
 // -- Listen to the click event on the list of books -- //
 app.booksUl.addEventListener('click', (e) => app.removeBook(e));
+
+// -- Liste to the click event on the navbar options -- //
+app.menu.addEventListener('click', (e) => app.showMenu(e));
