@@ -194,6 +194,7 @@ class App {
         this.library.insert(newBook);
         t.reset();
         e.title.focus();
+        this.menu.children[1].children[0].click();
       }
     } else {
       this.popError(t.querySelector(':invalid'));
@@ -237,3 +238,20 @@ app.booksUl.addEventListener('click', (e) => app.removeBook(e));
 
 // -- Liste to the click event on the navbar options -- //
 app.menu.addEventListener('click', (e) => app.showMenu(e));
+
+// -- to show the date and time running -- //
+// Function to format 1 in 01
+const zeroFill = (n) => `0${n}`.slice(-2);
+
+// Creates interval
+const interval = setInterval(() => {
+  // Get current time
+  const now = new Date();
+
+  // Format date as in mm/dd/aaaa hh:ii:ss
+  const curDay = `${zeroFill((now.getMonth() + 1))}/${zeroFill(now.getUTCDate())}/${now.getFullYear()}`;
+  const curTim = `${zeroFill(now.getHours())}:${zeroFill(now.getMinutes())}:${zeroFill(now.getSeconds())}`;
+  const dateTime = `${curDay} ${curTim}`;
+  // Display the date and time on the screen using div#date-time
+  document.getElementById('showdaytime').innerHTML = dateTime;
+}, 1000);
